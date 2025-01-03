@@ -1,4 +1,4 @@
-import { Box, CircularProgress, Typography } from '@mui/material'
+import { Box, Button, CircularProgress, Typography } from '@mui/material'
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import Table from '@mui/material/Table';
@@ -9,9 +9,14 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import MenuTable from '../../components/MenuTable';
+import { PlusOne } from '@mui/icons-material';
+import AddProjectDialog from '../../components/AddProjectDialog';
+import DeleteProjectDialog from '../../components/DeleteProjectDialog';
+import EditProjectDialog from '../../components/EditProjectDialog';
 
 const Home = () => {
-    const [data, setData] = useState([])
+    const [isOpen,setIsOpen] = useState(false);
+    const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchProjects = async () => {
@@ -32,14 +37,18 @@ const Home = () => {
     }, [])
 
 
+
     return (
         <Box sx={{ width: '100vw', minHeight: '100vh', background: '#E9EFEC' }}>
             {isLoading ? (
                 <Box sx={{ width: '100%', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <CircularProgress size={50} />
                 </Box>
-            ) : <Box sx={{mx:{base:'1rem',sm:'2rem',md:'3rem',lg:'5rem'},py:'5rem'}}>
-                <Typography component={'h1'} sx={{fontSize:'30px',fontWeight:700,mb:2}}>Projects List</Typography>
+            ) : <Box sx={{ mx: { base: '1rem', sm: '2rem', md: '3rem', lg: '5rem' }, py: '5rem' }}>
+                <Box sx={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                    <Typography component={'h1'} sx={{ fontSize: '30px', fontWeight: 700, mb: 2 }}>Projects List</Typography>
+                    <Button variant='contained' onClick={()=>setIsOpen(true)}>Add new Project</Button>
+                </Box>
                 <TableContainer component={Paper}>
                     <Table sx={{ minWidth: 650 }} aria-label="simple table">
                         <TableHead>
@@ -63,13 +72,15 @@ const Home = () => {
                                     <TableCell>{row.finished_tasks}</TableCell>
                                     <TableCell>{row.in_progress_tasks}</TableCell>
                                     <TableCell>{row.not_started_tasks_tasks}</TableCell>
-                                    <TableCell><MenuTable /></TableCell>
+                                    <TableCell><MenuTable id={row?.id} project={row} setData={setData}/></TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             </Box>}
+            {isOpen && <AddProjectDialog isOpen={isOpen} onClose={()=>setIsOpen(false)} setData={setData} />}
+
         </Box>
     )
 }

@@ -13,6 +13,9 @@ import { IconButton } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteProjectDialog from './DeleteProjectDialog';
+import EditProjectDialog from './EditProjectDialog';
+import {useNavigate} from 'react-router-dom'
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -57,9 +60,13 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const MenuTable = () => {
+const MenuTable = ({setData,id,project}) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const [isOpenDelete, setIsOpenDelete] = React.useState(false);
+  const [isOpenEdit, setIsOpenEdit] = React.useState(false);
+  const navigate = useNavigate()
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -90,19 +97,22 @@ const MenuTable = () => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={()=>navigate(`/${project.id}`)}>
           <RemoveRedEyeIcon />
           View
         </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={() => setIsOpenEdit(true)}>
           <EditIcon />
           Edit
         </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
+        <MenuItem onClick={() => setIsOpenDelete(true)}>
           <DeleteIcon />
           Delete
         </MenuItem>
       </StyledMenu>
+      {isOpenDelete && <DeleteProjectDialog id={id} isOpen={isOpenDelete} onClose={() => setIsOpenDelete(false)} setData={setData}  />}
+      {isOpenEdit && <EditProjectDialog  project={project} isOpen={isOpenEdit} onClose={()=>setIsOpenEdit(false)} setData={setData} />}
+
     </div>
   );
 }
